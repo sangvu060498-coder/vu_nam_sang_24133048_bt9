@@ -4,21 +4,21 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
-    <title>Quản lý Sản phẩm</title>
+    <title>Quản lý Sản phẩm - Vũ Nam Sang 24133048</title>
 </head>
 <body>
 
 <main layout:fragment="content">
     <div class="page-title">
-        <h1>Danh sách Sản phẩm (<span th:text="${totalProducts}">0</span>)</h1>
-        <a th:href="@{/products/create}" class="btn primary">Thêm Sản phẩm mới</a>
+        <h1>Quản lý Products (<span th:text="${totalProducts}">0</span>)</h1>
+        <a th:href="@{/products/create}" class="btn primary">+ Thêm Product</a>
     </div>
 
     <div class="alert success" th:if="${successMessage}" th:text="${successMessage}"></div>
     <div class="alert error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <form th:action="@{/products}" method="get" class="search">
-        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm theo tên...">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tên sản phẩm, mô tả...">
         <button type="submit" class="btn secondary">Tìm kiếm</button>
         <a th:href="@{/products}" class="btn secondary" th:if="${keyword != null and !keyword.isEmpty()}">Xóa tìm kiếm</a>
     </form>
@@ -28,35 +28,35 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Hình ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá</th>
-                <th>Mô tả</th>
-                <th>Người đăng</th>
-                <th>Thao tác</th>
+                <th>Ảnh</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>User</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="product : ${productPage.content}">
-                <td th:text="${product.id}">1</td>
+            <tr th:each="p : ${productPage.content}">
+                <td th:text="${p.id}">1</td>
                 <td>
-                    <img th:src="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl) ? product.imageUrl : '/images/avatar-default.png'}"
-                         alt="Product" class="thumb">
+                    <img th:if="${p.imageUrl != null}"
+                         th:src="${p.imageUrl.contains('|') ? #strings.substringBefore(p.imageUrl, '|') : p.imageUrl}"
+                         alt="Product Image" class="thumb">
+                    <span th:unless="${p.imageUrl != null}" style="color: #94a3b8;">No image</span>
                 </td>
-                <td><strong th:text="${product.name}">Sản phẩm A</strong></td>
+                <td><strong th:text="${p.name}">Sản phẩm A</strong></td>
                 <td>
-                    <span style="color: #2563eb; font-weight: bold;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100.000 VNĐ</span>
+                    <span style="color: #2563eb; font-weight: bold;" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 2, 'POINT')}">100,000.00</span>
                 </td>
-                <td th:text="${product.description}">Mô tả ngắn...</td>
-                <td th:text="${product.userFullName != null ? product.userFullName : 'Unknown'}">Admin</td>
-                <td>
-                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn secondary small">Sửa</a>
-                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn danger small"
-                       onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">Xóa</a>
+                <td th:text="${p.username != null ? p.username : (p.userFullName != null ? p.userFullName : 'admin')}">admin</td>
+                <td class="actions">
+                    <a th:href="@{/products/edit/{id}(id=${p.id})}" class="btn secondary small">Edit</a>
+                    <a th:href="@{/products/delete/{id}(id=${p.id})}" class="btn danger small"
+                       onclick="return confirm('Xóa product này?')">Delete</a>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(productPage.content)}">
-                <td colspan="7" style="text-align: center; color: #64748b;">Chưa có sản phẩm nào.</td>
+                <td colspan="6" style="text-align: center; color: #64748b;">Không có dữ liệu.</td>
             </tr>
             </tbody>
         </table>

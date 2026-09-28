@@ -2,46 +2,50 @@ package vn.iotstar.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "products")
+@Table(
+    name = "products",
+    indexes = @Index(name = "idx_products_name", columnList = "name")
+)
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150, columnDefinition = "nvarchar(150)")
+    @Column(nullable = false, length = 2000, columnDefinition = "nvarchar(500)")
     private String name;
 
-    @Column(nullable = false)
-    private Double price;
-
-    @Column(columnDefinition = "nvarchar(MAX)")
+    @Column(length = 5000, columnDefinition = "nvarchar(500)")
     private String description;
 
-    @Column(name = "image_url", length = 500)
+    @Column(nullable = false, precision = 18, scale = 2)
+    private BigDecimal price;
+
+    @Column(name = "image_url", length = 1000)
     private String imageUrl;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Product() {
     }
 
-    public Product(Long id, String name, Double price, String description, String imageUrl, LocalDateTime createdAt, User user) {
+    public Product(Long id, String name, String description, BigDecimal price, String imageUrl, User user, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
-        this.price = price;
         this.description = description;
+        this.price = price;
         this.imageUrl = imageUrl;
-        this.createdAt = (createdAt != null) ? createdAt : LocalDateTime.now();
         this.user = user;
+        this.createdAt = (createdAt != null) ? createdAt : LocalDateTime.now();
     }
 
     public Long getId() {
@@ -60,20 +64,20 @@ public class Product {
         this.name = name;
     }
 
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public String getImageUrl() {
@@ -84,20 +88,20 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public static ProductBuilder builder() {
@@ -107,11 +111,11 @@ public class Product {
     public static class ProductBuilder {
         private Long id;
         private String name;
-        private Double price;
         private String description;
+        private BigDecimal price;
         private String imageUrl;
-        private LocalDateTime createdAt = LocalDateTime.now();
         private User user;
+        private LocalDateTime createdAt = LocalDateTime.now();
 
         ProductBuilder() {
         }
@@ -126,13 +130,13 @@ public class Product {
             return this;
         }
 
-        public ProductBuilder price(Double price) {
-            this.price = price;
+        public ProductBuilder description(String description) {
+            this.description = description;
             return this;
         }
 
-        public ProductBuilder description(String description) {
-            this.description = description;
+        public ProductBuilder price(BigDecimal price) {
+            this.price = price;
             return this;
         }
 
@@ -141,18 +145,18 @@ public class Product {
             return this;
         }
 
-        public ProductBuilder createdAt(LocalDateTime createdAt) {
-            this.createdAt = createdAt;
-            return this;
-        }
-
         public ProductBuilder user(User user) {
             this.user = user;
             return this;
         }
 
+        public ProductBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
         public Product build() {
-            return new Product(id, name, price, description, imageUrl, createdAt, user);
+            return new Product(id, name, description, price, imageUrl, user, createdAt);
         }
     }
 }

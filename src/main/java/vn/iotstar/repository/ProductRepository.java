@@ -3,10 +3,23 @@ package vn.iotstar.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import vn.iotstar.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    @Query("""
+        SELECT p FROM Product p JOIN FETCH p.user u
+        WHERE lower(p.name) LIKE lower(concat('%', :keyword, '%'))
+           OR lower(coalesce(p.description, '')) LIKE lower(concat('%', :keyword, '%'))
+    """)
+    Page<Product> search(@Param("keyword") String keyword, Pageable pageable);
+
+    Page<Product> findByUserId(Long userId, Pageable pageable);
+
     Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
     Page<Product> findByUserIdAndNameContainingIgnoreCase(Long userId, String name, Pageable pageable);
+
     long countByUserId(Long userId);
 }

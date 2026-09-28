@@ -4,13 +4,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
-    <title th:text="${productDTO.id != null} ? 'Chỉnh sửa Sản phẩm' : 'Thêm Sản phẩm mới'">Tạo/Sửa Sản phẩm</title>
+    <title th:text="${productDTO.id != null} ? 'Sửa Product - Vũ Nam Sang 24133048' : 'Thêm Product - Vũ Nam Sang 24133048'">Tạo/Sửa Product</title>
 </head>
 <body>
 
 <main layout:fragment="content">
     <div class="page-title">
-        <h1 th:text="${productDTO.id != null} ? 'Chỉnh sửa Sản phẩm' : 'Thêm Sản phẩm mới'">Sản phẩm</h1>
+        <h1 th:text="${productDTO.id != null} ? 'Sửa Product' : 'Thêm Product'">Product</h1>
         <a th:href="@{/products}" class="btn secondary">Quay lại danh sách</a>
     </div>
 
@@ -20,34 +20,37 @@
         <form th:action="${productDTO.id != null} ? @{/products/edit/{id}(id=${productDTO.id})} : @{/products/create}"
               th:object="${productDTO}" method="post" enctype="multipart/form-data" class="form-grid">
 
-            <label>Tên sản phẩm</label>
+            <input type="hidden" th:field="*{id}">
+
+            <label for="name">Tên sản phẩm</label>
             <div>
-                <input type="text" th:field="*{name}" required placeholder="Nhập tên sản phẩm">
+                <input id="name" type="text" th:field="*{name}" required placeholder="Tên sản phẩm">
                 <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
 
-            <label>Giá (VNĐ)</label>
+            <label for="description">Mô tả</label>
             <div>
-                <input type="number" th:field="*{price}" step="1000" min="0" required placeholder="0">
+                <textarea id="description" th:field="*{description}" rows="5" placeholder="Mô tả sản phẩm..."></textarea>
+            </div>
+
+            <label for="price">Giá</label>
+            <div>
+                <input id="price" type="number" step="0.01" th:field="*{price}" required placeholder="0.00">
                 <div class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
             </div>
 
-            <label>Mô tả sản phẩm</label>
+            <label for="image">Ảnh</label>
             <div>
-                <textarea th:field="*{description}" placeholder="Nhập mô tả chi tiết sản phẩm..."></textarea>
-            </div>
-
-            <label>Hình ảnh sản phẩm</label>
-            <div>
-                <input type="file" name="imageFile" accept="image/*">
+                <input id="image" type="file" name="imageFile" accept="image/*">
                 <div th:if="${productDTO.imageUrl != null}" style="margin-top: 10px;">
-                    <img th:src="${productDTO.imageUrl}" alt="Ảnh sản phẩm hiện tại" class="thumb">
+                    <img th:src="${productDTO.imageUrl.contains('|') ? #strings.substringBefore(productDTO.imageUrl, '|') : productDTO.imageUrl}"
+                         alt="Preview" class="thumb">
                 </div>
             </div>
 
             <div class="mt">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button type="submit" class="btn primary">Lưu sản phẩm</button>
+                <button type="submit" class="btn primary">Lưu</button>
                 <a th:href="@{/products}" class="btn secondary">Hủy</a>
             </div>
         </form>

@@ -8,9 +8,12 @@ import vn.iotstar.entity.Product;
 public interface ProductMapper {
 
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "username", source = "user.username")
     @Mapping(target = "userFullName", source = "user.fullName")
+    @Mapping(target = "image", ignore = true)
     ProductDTO toDto(Product entity);
 
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Product toEntity(ProductDTO dto);
 }

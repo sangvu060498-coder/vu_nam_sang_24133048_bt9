@@ -8,14 +8,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.iotstar.dto.*;
 import vn.iotstar.service.AuthService;
+import vn.iotstar.service.OtpService;
 
 @Controller
 public class AuthController {
 
     private final AuthService authService;
+    private final OtpService otpService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, OtpService otpService) {
         this.authService = authService;
+        this.otpService = otpService;
     }
 
     @GetMapping("/login")
@@ -79,13 +82,24 @@ public class AuthController {
                 redirectAttributes.addFlashAttribute("verified", true);
                 return "redirect:/login";
             } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Mã OTP không hợp lệ hoặc đã hết hạn.");
+                redirectAttributes.addFlashAttribute("errorMessage", "Mã OTP không hợp lệ, hết hạn hoặc quá số lần thử.");
                 return "redirect:/verify-otp?email=" + dto.getEmail();
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/verify-otp?email=" + dto.getEmail();
         }
+    }
+
+    @PostMapping("/resend-register-otp")
+    public String resendRegisterOtp(@RequestParam("email") String email, RedirectAttributes redirectAttributes) {
+        try {
+            otpService.generateAndSaveOtp(email, "REGISTER");
+            redirectAttributes.addFlashAttribute("successMessage", "Đã gửi lại mã OTP thành công.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/verify-otp?email=" + email;
     }
 
     @GetMapping("/forgot-password")
@@ -106,7 +120,7 @@ public class AuthController {
 
         try {
             authService.processForgotPassword(dto);
-            redirectAttributes.addFlashAttribute("successMessage", "Mã OTP đặt lại mật khẩu đã được gửi đến email.");
+            redirectAttributes.addFlashAttribute("successMessage", "Mã OTP đặt lại mật khẩu đã được gửi.");
             return "redirect:/reset-password?email=" + dto.getEmail();
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());

@@ -5,38 +5,49 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "otp_tokens")
+@Table(
+    name = "otp_tokens",
+    indexes = @Index(name = "idx_otp_email_type", columnList = "email,type")
+)
 public class OtpToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 10)
-    private String otpCode;
-
     @Column(nullable = false, length = 150)
     private String email;
 
+    @Column(nullable = false, length = 100)
+    private String otpHash;
+
     @Column(nullable = false, length = 30)
-    private String type; // REGISTER, FORGOT_PASSWORD
+    private String type;
 
     @Column(nullable = false)
-    private LocalDateTime expiryDate;
+    private LocalDateTime expiresAt;
+
+    @Column(nullable = false)
+    private int attempts = 0;
 
     @Column(nullable = false)
     private boolean used = false;
 
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     public OtpToken() {
     }
 
-    public OtpToken(Long id, String otpCode, String email, String type, LocalDateTime expiryDate, boolean used) {
+    public OtpToken(Long id, String email, String otpHash, String type, LocalDateTime expiresAt, int attempts, boolean used, LocalDateTime createdAt) {
         this.id = id;
-        this.otpCode = otpCode;
         this.email = email;
+        this.otpHash = otpHash;
         this.type = type;
-        this.expiryDate = expiryDate;
+        this.expiresAt = expiresAt;
+        this.attempts = attempts;
         this.used = used;
+        this.createdAt = (createdAt != null) ? createdAt : LocalDateTime.now();
     }
 
     public Long getId() {
@@ -47,20 +58,20 @@ public class OtpToken {
         this.id = id;
     }
 
-    public String getOtpCode() {
-        return otpCode;
-    }
-
-    public void setOtpCode(String otpCode) {
-        this.otpCode = otpCode;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getOtpHash() {
+        return otpHash;
+    }
+
+    public void setOtpHash(String otpHash) {
+        this.otpHash = otpHash;
     }
 
     public String getType() {
@@ -71,12 +82,20 @@ public class OtpToken {
         this.type = type;
     }
 
-    public LocalDateTime getExpiryDate() {
-        return expiryDate;
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
     }
 
-    public void setExpiryDate(LocalDateTime expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
     }
 
     public boolean isUsed() {
@@ -87,17 +106,27 @@ public class OtpToken {
         this.used = used;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public static OtpTokenBuilder builder() {
         return new OtpTokenBuilder();
     }
 
     public static class OtpTokenBuilder {
         private Long id;
-        private String otpCode;
         private String email;
+        private String otpHash;
         private String type;
-        private LocalDateTime expiryDate;
+        private LocalDateTime expiresAt;
+        private int attempts = 0;
         private boolean used = false;
+        private LocalDateTime createdAt = LocalDateTime.now();
 
         OtpTokenBuilder() {
         }
@@ -107,13 +136,13 @@ public class OtpToken {
             return this;
         }
 
-        public OtpTokenBuilder otpCode(String otpCode) {
-            this.otpCode = otpCode;
+        public OtpTokenBuilder email(String email) {
+            this.email = email;
             return this;
         }
 
-        public OtpTokenBuilder email(String email) {
-            this.email = email;
+        public OtpTokenBuilder otpHash(String otpHash) {
+            this.otpHash = otpHash;
             return this;
         }
 
@@ -122,8 +151,13 @@ public class OtpToken {
             return this;
         }
 
-        public OtpTokenBuilder expiryDate(LocalDateTime expiryDate) {
-            this.expiryDate = expiryDate;
+        public OtpTokenBuilder expiresAt(LocalDateTime expiresAt) {
+            this.expiresAt = expiresAt;
+            return this;
+        }
+
+        public OtpTokenBuilder attempts(int attempts) {
+            this.attempts = attempts;
             return this;
         }
 
@@ -132,8 +166,13 @@ public class OtpToken {
             return this;
         }
 
+        public OtpTokenBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
         public OtpToken build() {
-            return new OtpToken(id, otpCode, email, type, expiryDate, used);
+            return new OtpToken(id, email, otpHash, type, expiresAt, attempts, used, createdAt);
         }
     }
 }
