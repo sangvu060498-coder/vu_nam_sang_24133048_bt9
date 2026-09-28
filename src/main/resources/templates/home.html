@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Trang chủ - Vũ Nam Sang 24133048</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1>Trang chủ UTEShop - Vũ Nam Sang (MSSV: 24133048)</h1>
+    </div>
+
+    <div class="panel" style="margin-bottom: 20px;">
+        <p style="font-size: 16px;">
+            Xin chào <strong th:text="${#authentication.principal.fullName}">Vũ Nam Sang</strong>!
+            Chào mừng bạn đến với hệ thống quản lý Spring Boot 4 + Security + MapStruct + Cloudinary + SQL Server.
+        </p>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <b>TỔNG SỐ NGƯỜI DÙNG</b>
+            <strong th:text="${totalUsers}">0</strong>
+            <p style="margin-top: 10px;">
+                <a th:href="@{/users}" class="btn secondary small">Quản lý Người dùng</a>
+            </p>
+        </div>
+
+        <div class="card">
+            <b>TỔNG SỐ SẢN PHẨM</b>
+            <strong th:text="${totalProducts}">0</strong>
+            <p style="margin-top: 10px;">
+                <a th:href="@{/products}" class="btn primary small">Quản lý Sản phẩm</a>
+            </p>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng nhập - IOTSTAR SHOP</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="auth-page">
+<div class="auth-card">
+    <h1>IOTSTAR SHOP</h1>
+    <h2>Đăng nhập</h2>
+
+    <div class="alert error" th:if="${param.error}">
+        Username/Email hoặc mật khẩu không đúng hoặc tài khoản chưa được kích hoạt.
+    </div>
+    <div class="alert success" th:if="${verified}">
+        Xác thực tài khoản thành công! Bạn có thể đăng nhập ngay bây giờ.
+    </div>
+    <div class="alert success" th:if="${reset}">
+        Đổi mật khẩu thành công! Hãy đăng nhập lại bằng mật khẩu mới.
+    </div>
+    <div class="alert success" th:if="${param.logout}">
+        Bạn đã đăng xuất thành công.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <label>Username hoặc Email</label>
+        <input type="text" name="login" required autofocus placeholder="Nhập username hoặc email">
+
+        <label>Mật khẩu</label>
+        <input type="password" name="password" required placeholder="Nhập mật khẩu">
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <button class="btn primary full mt" type="submit">Đăng nhập</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px;">
+        <a th:href="@{/register}">Tạo tài khoản mới</a> · 
+        <a th:href="@{/forgot-password}">Quên mật khẩu?</a>
+    </p>
+</div>
+</body>
+</html>

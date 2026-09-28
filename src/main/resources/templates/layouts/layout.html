@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title layout:title-pattern="$CONTENT_TITLE - UTEShop - Vũ Nam Sang 24133048">UTEShop - Vũ Nam Sang 24133048</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="container" layout:fragment="content">
+</main>
+
+<footer class="footer">
+    Copyright © UTEShop - Sinh viên thực hiện: Vũ Nam Sang (MSSV: 24133048)
+</footer>
+
+</body>
+</html>

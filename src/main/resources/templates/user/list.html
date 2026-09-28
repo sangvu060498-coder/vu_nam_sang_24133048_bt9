@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Quản lý Người dùng</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1>Danh sách Người dùng (<span th:text="${totalUsers}">0</span>)</h1>
+        <a th:href="@{/users/create}" class="btn primary">Thêm Người dùng mới</a>
+    </div>
+
+    <div class="alert success" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <form th:action="@{/users}" method="get" class="search">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm theo Username, Email hoặc Họ tên...">
+        <button type="submit" class="btn secondary">Tìm kiếm</button>
+        <a th:href="@{/users}" class="btn secondary" th:if="${keyword != null and !keyword.isEmpty()}">Xóa tìm kiếm</a>
+    </form>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Avatar</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Họ và tên</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th>Số sản phẩm</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${userPage.content}">
+                <td th:text="${user.id}">1</td>
+                <td>
+                    <img th:src="${user.images != null and !#strings.isEmpty(user.images) ? user.images : '/images/avatar-default.png'}"
+                         alt="Avatar" class="thumb">
+                </td>
+                <td th:text="${user.username}">username</td>
+                <td th:text="${user.email}">user@gmail.com</td>
+                <td th:text="${user.fullName}">Nguyễn Văn A</td>
+                <td>
+                    <span class="badge badge-admin" th:if="${user.roleName == 'ROLE_ADMIN'}">ADMIN</span>
+                    <span class="badge badge-user" th:unless="${user.roleName == 'ROLE_ADMIN'}">USER</span>
+                </td>
+                <td>
+                    <span style="color: #166534; font-weight: bold;" th:if="${user.enabled}">Hoạt động</span>
+                    <span style="color: #dc2626; font-weight: bold;" th:unless="${user.enabled}">Chưa kích hoạt</span>
+                </td>
+                <td>
+                    <strong style="font-size: 16px; color: #2563eb;" th:text="${user.productCount}">0</strong>
+                </td>
+                <td>
+                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn secondary small">Sửa</a>
+                    <a th:href="@{/users/delete/{id}(id=${user.id})}" class="btn danger small"
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?')">Xóa</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(userPage.content)}">
+                <td colspan="9" style="text-align: center; color: #64748b;">Không tìm thấy người dùng nào.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" th:if="${userPage.totalPages > 1}">
+        <span th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+              th:classappend="${i == userPage.number} ? 'active' : ''">
+            <a th:href="@{/users(page=${i}, keyword=${keyword})}" th:text="${i + 1}">1</a>
+        </span>
+    </div>
+</main>
+
+</body>
+</html>
